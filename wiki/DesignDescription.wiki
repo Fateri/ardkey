@@ -1,0 +1,64 @@
+= Design Description =
+
+= Nomenclature =
+
+== Target ==
+The computer to be controlled via the Arduino USB HID.
+
+== Host ==
+The computer presenting an interface to control the Target.
+
+== Server ==
+The software running on the Arduino.
+ * DHCP is used to grab an IP address. The hostname will be "wiznetccde02".
+ * If DHCP fails, it defaults to:
+  * IP: 192.168.0.69
+  * Gateway: 192.168.0.1
+  * Subnet mask: 255.255.255.0
+
+== Client ==
+The software running on the Host. (Telnet client on port 23 works fine)
+
+= Details =
+== Protocol ==
+ * TCP packets up to 1024 bytes long line terminated 
+ * Client to Server 
+  * ASCII characters are interpreted verbatim with the exception of A-Z 
+  * 3-tuples of A-Z are interpreted as special characters.
+   * The following special keys are available:
+    * CTL - Left control key
+    * ALT - Left control key
+    * SHT - Left shift key
+    * WIN - Left windows/command key
+    * UPP - Up arrow
+    * DWN - Down arrow
+    * LFT - Left arrow
+    * RIT - Right arrow
+    * BAS - Backspace
+    * DEL - Delete key
+    * ESC - Escape key
+    * RTN - Enter key
+    * TAB - Tab key
+   * The following commands are available:
+    * ONE - Hold down the following character
+    * TWO - Hold down the following two characters
+    * RLS - Release all keys
+    * SLP - Sleep for 3 seconds before sending subsequent key strokes
+ 
+== Protocol Example ==
+ * Quick example:
+  * `abcTWOazwwRLS`: press and release abc; hold a and z; press and release w twice; release a and z.
+
+ * Send CTL+ALT+Delete:
+  * `TWOCTLALTDELRLS`: Hold down Ctrl and Alt, press delete, then let go of all keys.
+
+ * Paste (via CTRL+v):
+  * `ONECTLvRLS`: Hold down CTL, press v, then let go of all keys.
+
+ * Alt-tab through windows
+  * `ONEALTTAB`: Hold down alt key and tap TAB once
+  * `TAB`: Press tab to go to the next window (repeat as needed)
+  * `RTNRLS`: Press enter and release the Alt key.
+
+ * Run notepad.exe
+  * `ONEWINrRLSSLPnotepad.exeRTN`: Hold down the windows key, press r, let go of the windows key, sleep for 3 seconds, type "notepad.exe", press enter.
